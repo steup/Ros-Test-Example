@@ -2,6 +2,7 @@
 src/CMakeLists.txt
 devel
 build
+doc
 
 ## Compiled Object files
 *.slo

@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package format="2">
   <name>cars</name>
-  <version>0.0.0</version>
+  <version>0.1.0</version>
   <description>Cars example for GTest and RosTest</description>
 
   <!-- One maintainer tag required, multiple allowed, one person per tag --> 
