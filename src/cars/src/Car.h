@@ -14,4 +14,5 @@ class Car : public SynchronizedCar {
    Car(const std::string& numberPlate); 
    virtual ~Car() {}
    virtual void steer(Steering cmd);
+   using SynchronizedCar::steer;
 };
