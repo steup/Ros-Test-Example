@@ -1,7 +1,6 @@
 <launch>
-  <node name="simulation" pkg="cars" type="simulation"/>
-  <node name="rviz"  pkg="rviz" type="rviz" args="-d $(find cars)/common/cars.rviz"/>
-  <include file="$(find cars)/launch/car.launch">
-    <arg name="numberPlate" value="BEG_IN_001"/>
-  </include>
+  <arg name="frameRate" default="0.1"/>
+  <node name="simulation" pkg="cars" type="simulation">
+    <param name="frameRate" type="double" value="$(arg frameRate)"/>
+  </node>
 </launch>

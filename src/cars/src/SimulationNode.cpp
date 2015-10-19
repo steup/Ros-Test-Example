@@ -22,12 +22,19 @@ bool createCar(cars::NewCar::Request& req, cars::NewCar::Response& res) {
 
 int main(int argc, char** argv) {
   ros::init(argc, argv, "road_simulation");
-  ros::Duration frameRate(0.1);
-  OccupancyGridRoads roads(18, 18, frameRate);
-  Simulation sim(roads);
-  simPtr = unique_ptr<Simulation>(&sim);
+  double frameRate;
+  if(!ros::param::has("~frameRate")){
+    ROS_ERROR_STREAM("No simulation frame rate specified!");
+    return -1;
+  }
+  if(!ros::param::get("~frameRate", frameRate)){
+    ROS_ERROR_STREAM("Invalid simulation frame rate specified!");
+    return -2;
+  }
+  OccupancyGridRoads roads(18, 18, ros::Duration(frameRate));
+  simPtr = unique_ptr<Simulation>(new Simulation(roads));
   ros::NodeHandle n;
-  ros::Timer timer = n.createTimer(frameRate, &run);
+  ros::Timer timer = n.createTimer(ros::Duration(frameRate), &run);
   ros::ServiceServer registryServer = n.advertiseService("carRegistry", &createCar);
   while(ros::ok())
     ros::spin();
