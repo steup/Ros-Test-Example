@@ -16,7 +16,7 @@ Car::Car(const string& numberPlate) : SynchronizedCar(numberPlate) {
   if (!srv.call(arg))
     throw runtime_error("Service call failed");
   if (!arg.response.success)
-    throw invalid_argument("Cannot spawn car");
+    throw logic_error("Cannot spawn car");
 }
 
 void Car::steer(Car::Steering cmd){
