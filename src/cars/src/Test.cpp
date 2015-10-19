@@ -9,8 +9,11 @@
 
 #include <thread>
 #include <atomic>
+#include <chrono>
 
 using namespace std;
+using namespace std::chrono;
+using namespace std::this_thread;
 
 class CarTestSuite : public ::testing::Test{
   private:
@@ -52,9 +55,34 @@ TEST_F(CarTestSuite, registrationTest) {
 
 TEST_F(CarTestSuite, uniquenessTest) {
   failUnique();
-  ASSERT_THROW(Car car2("TestCar");, invalid_argument) << "Double creation of cars was not detected correctly";
+  ASSERT_THROW(Car car("TestCar");, invalid_argument) << "Double creation of cars was not detected correctly";
 }
 
+TEST_F(CarTestSuite, localTest) {
+  Car car("TestCar");
+  ASSERT_EQ(car.steer(), Car::Steering::Straight) << "Default steering straight was not set correctly";
+  car.steer(Car::Steering::Left);
+  ASSERT_EQ(car.steer(), Car::Steering::Left) << "Steering left was not set correctly";
+  car.steer(Car::Steering::Straight);
+  ASSERT_EQ(car.steer(), Car::Steering::Straight) << "Steering straight was not set correctly";
+  car.steer(Car::Steering::Right);
+  ASSERT_EQ(car.steer(), Car::Steering::Right) << "Steering right was not set correctly";
+}
+
+TEST_F(CarTestSuite, remoteTest) {
+  Car car("TestCar");
+  SimCar simCar("TestCar", SimCar::Dir::Up, 1, 1);
+  ASSERT_EQ(simCar.steer(), SimCar::Steering::Straight) << "Default steering straight was not set correctly";
+  car.steer(Car::Steering::Left);
+  sleep_for(milliseconds(10));
+  ASSERT_EQ(simCar.steer(), SimCar::Steering::Left) << "Steering left was not transmitted correctly";
+  car.steer(Car::Steering::Straight);
+  sleep_for(milliseconds(10));
+  ASSERT_EQ(simCar.steer(), SimCar::Steering::Straight) << "Steering straight was not transmitted correctly";
+  car.steer(Car::Steering::Right);
+  sleep_for(milliseconds(10));
+  ASSERT_EQ(simCar.steer(), SimCar::Steering::Right) << "Steering right was not transmitted correctly";
+}
 
 int main(int argc, char** argv){
   ros::init(argc, argv, "CarTestNode");
