@@ -21,14 +21,14 @@ SynchronizedCar::Steering SynchronizedCar::msgToSteer(int32_t cmd) {
 }
 
 SynchronizedCar::SynchronizedCar(const std::string numberPlate)
-  : CarInterface(numberPlate) {
+  : mPlate(numberPlate) {
   mSteer.cmd = cars::Steer::Straight;
   mWindows.left = false;
   mWindows.right = false;
   mWindows.front = false;
 }
 
-CarInterface::Steering SynchronizedCar::steer() const {
+SynchronizedCar::Steering SynchronizedCar::steer() const {
   return msgToSteer(mSteer.cmd);
 }
 

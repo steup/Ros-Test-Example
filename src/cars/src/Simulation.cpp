@@ -4,7 +4,7 @@
 #include <list>
 
 using namespace std;
-using Steering = CarInterface::Steering;
+using Steering = SynchronizedCar::Steering;
 using Cell     = RoadInterface::Cell;
 using Dir      = SimCar::Dir;
 
