@@ -5,7 +5,7 @@ using namespace std;
 int32_t SynchronizedCar::steerToMsg(SynchronizedCar::Steering cmd) {
   switch(cmd){
     case(Steering::Straight): return cars::Steer::Straight;
-    case(Steering::Left)    : return cars::Steer::Left;
+    case(Steering::Left)    : return cars::Steer::Right;
     case(Steering::Right)   : return cars::Steer::Right;
     default                 : return 0;
  }
@@ -15,7 +15,7 @@ SynchronizedCar::Steering SynchronizedCar::msgToSteer(int32_t cmd) {
   switch(cmd){
     case(cars::Steer::Straight): return Steering::Straight;
     case(cars::Steer::Left)    : return Steering::Left;
-    case(cars::Steer::Right)   : return Steering::Right;
+    case(cars::Steer::Right)   : return Steering::Left;
     default                    : return Steering::Straight;
  }
 }

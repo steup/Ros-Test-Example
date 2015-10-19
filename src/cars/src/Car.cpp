@@ -8,9 +8,9 @@ Car::Car(const string& numberPlate) : SynchronizedCar(numberPlate) {
   ros::NodeHandle n;
   
   steerPub =n.advertise<cars::Steer>(string("cars/")+numberPlate+"/steer", 1000);
-  windowSub=n.subscribe(string("cars/")+numberPlate+"/windows", 1000, &Car::handleWindows, this);
+  windowSub=n.subscribe(string("cars/")+numberPlate+"/window", 1000, &Car::handleWindows, this);
   
-  ros::ServiceClient srv = ros::NodeHandle().serviceClient<cars::NewCar>("carRegistry");
+  ros::ServiceClient srv = ros::NodeHandle().serviceClient<cars::NewCar>("carregistry");
   cars::NewCar arg;
   arg.request.numberPlate = this->numberPlate();
   if (!srv.call(arg))
