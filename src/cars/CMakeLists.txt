@@ -97,28 +97,27 @@ CATKIN_DEPENDS roscpp std_msgs nav_msgs
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a cpp library
-# add_library(aseia_base
+add_library(cars src/SimpleDriver.cpp src/Car.cpp src/SynchronizedCar.cpp src/OccupancyGridRoads.cpp src/SimCar.cpp src/Simulation.cpp)
+
 #   src/${PROJECT_NAME}/aseia_base.cpp
 # )
 
 ## Declare a cpp executable
 # add_executable(aseia_base_node src/aseia_base_node.cpp)
-add_executable(car src/SimpleDriver.cpp src/Car.cpp src/SynchronizedCar.cpp src/DriverNode.cpp)
-add_executable(simulation src/OccupancyGridRoads.cpp src/SimCar.cpp src/SynchronizedCar.cpp
-                          src/Simulation.cpp
-                          src/SimulationNode.cpp)
+add_executable(car        src/DriverNode.cpp)
+add_executable(simulation src/SimulationNode.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
-add_dependencies(car cars_generate_messages_cpp)
-add_dependencies(simulation cars_generate_messages_cpp)
+add_dependencies(car cars cars_generate_messages_cpp)
+add_dependencies(simulation cars cars_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(aseia_base_node
 #   ${catkin_LIBRARIES}
 # )
-target_link_libraries(car ${catkin_LIBRARIES})
-target_link_libraries(simulation ${catkin_LIBRARIES})
+target_link_libraries(car ${catkin_LIBRARIES} cars)
+target_link_libraries(simulation ${catkin_LIBRARIES} cars)
 
 #############
 ## Install ##
