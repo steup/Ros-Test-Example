@@ -16,8 +16,18 @@ int main(int argc, char** argv) {
     ROS_ERROR("Car has invalid number plate!");
     return -2;
   }
-  SimpleDriver driver(plate);
-  while(ros::ok())
-    ros::spin();
+  while(true) {
+    try {
+      SimpleDriver driver(plate);
+      while(ros::ok())
+        ros::spin();
+    }catch(runtime_error&){
+      ROS_INFO_STREAM("Simulation not running (yet)");
+    }
+    catch(invalid_argument&){
+      throw;
+      break;
+    }
+  }
   return 0;
 }
