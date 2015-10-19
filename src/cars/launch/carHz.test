@@ -1,0 +1,21 @@
+<launch>
+  <include file="$(find cars)/launch/sim.launch"/>
+    <arg name="frameRate" value="0.1"/>
+  </include>
+  <include file="$(find cars)/launch/car.launch">
+    <arg name="numberPlate" value="BEG_IN_001"/>
+  </include>
+  <test test-name="carHzTest_windows" pkg="rostest" type="hztest" name="windowsHz" >
+    <param name="topic" value="/cars/BEG_IN_001/windows" />  
+    <param name="hz" value="10" />
+    <param name="hzerror" value="1" />
+    <param name="test_duration" value="5.0" />
+  </test>
+  <test test-name="carHzTest_steer" pkg="rostest" type="hztest" name="steerHz" >
+    <param name="topic" value="/cars/BEG_IN_001/steer" />  
+    <param name="hz" value="10" />
+    <param name="hzerror" value="1" />
+    <param name="test_duration" value="5.0" />
+  </test>
+</launch>
+
