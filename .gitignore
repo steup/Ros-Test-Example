@@ -1,4 +1,9 @@
-# Compiled Object files
+#ROS Specific Stuff
+src/CMakeList.txt
+devel
+build
+
+## Compiled Object files
 *.slo
 *.lo
 *.o

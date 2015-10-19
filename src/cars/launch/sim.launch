@@ -1,0 +1,7 @@
+<launch>
+  <node name="simulation" pkg="cars" type="simulation"/>
+  <node name="rviz"  pkg="rviz" type="rviz" args="-d $(find cars)/common/cars.rviz"/>
+  <include file="$(find cars)/launch/car.launch">
+    <arg name="numberPlate" value="BEG_IN_001"/>
+  </include>
+</launch>

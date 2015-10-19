@@ -1,0 +1,6 @@
+<launch>
+  <arg name="numberPlate" />
+  <node name="$(arg numberPlate)" pkg="cars" type="car">
+    <param name="numberPlate" type="str" value="$(arg numberPlate)"/>
+  </node>
+</launch>
