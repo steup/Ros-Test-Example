@@ -1,5 +1,5 @@
 #ROS Specific Stuff
-src/CMakeList.txt
+src/CMakeLists.txt
 devel
 build
 
