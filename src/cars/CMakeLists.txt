@@ -111,6 +111,7 @@ add_executable(simulation src/SimulationNode.cpp)
 ## as an example, message headers may need to be generated before nodes
 add_dependencies(car cars cars_generate_messages_cpp)
 add_dependencies(simulation cars cars_generate_messages_cpp)
+add_dependencies(cars cars_generate_messages_cpp)
 
 ## Specify libraries to link a library or executable target against
 # target_link_libraries(aseia_base_node
