@@ -160,8 +160,9 @@ target_link_libraries(simulation ${catkin_LIBRARIES} cars)
 #############
 
 ## Add gtest based cpp test target and link libraries
-catkin_add_gtest(${PROJECT_NAME}-test src/Test.cpp)
-if(TARGET ${PROJECT_NAME}-test)
+if(CATKIN_ENABLE_TESTING)
+	find_package(rostest REQUIRED)
+	add_rostest_gtest(${PROJECT_NAME}-test launch/gtest.test src/Test.cpp)
   target_link_libraries(${PROJECT_NAME}-test ${catkin_LIBRARIES} cars)
 endif()
 

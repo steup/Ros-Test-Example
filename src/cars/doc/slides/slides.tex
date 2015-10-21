@@ -1,0 +1,386 @@
+\documentclass{beamer}
+\setbeamertemplate{navigation symbols}{}
+\usetheme{Frankfurt}
+
+\usepackage{listings}
+\lstdefinestyle{code}{
+  language       = C++,
+  basicstyle      = \footnotesize\ttfamily\color{gray},
+  numbers         = left,
+  tabsize         = 2,
+  backgroundcolor = \color{black},
+  keywordstyle    = \bfseries\color{green},
+  commentstyle    = \itshape\color{cyan},
+  identifierstyle = \color{white},
+  stringstyle     = \color{orange},
+  numberstyle     = \color{red}
+}
+\lstdefinestyle{cmd}{
+  basicstyle      = \scriptsize\ttfamily\color{green},
+  backgroundcolor = \color{black}
+}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=cyan}
+
+\usepackage{etoolbox}
+
+\begin{document}
+
+\newcommand{\defEmph}[2]{%
+	\expandafter\newcommand\csname #1\endcsname{%
+		\href{#2}{\textit #1}%
+	}%
+  \newtoggle{#1}%
+	\toggletrue{#1}%
+}
+\renewcommand{\emph}[1]{%
+	\iftoggle{#1}{%
+		\expandafter\csname #1\endcsname%
+		\global\togglefalse{#1}%
+	}{%
+		\textit #1%
+	}%
+}
+
+\defEmph{roslaunch}{http://wiki.ros.org/roslaunch}
+\defEmph{rostest}{http://wiki.ros.org/rostest}
+\defEmph{RVIZ}{http://wiki.ros.org/rviz}
+\defEmph{catkin}{http://wiki.ros.org/catkin}
+\defEmph{roscore}{http://wiki.ros.org/roscore}
+\defEmph{GTest}{https://github.com/google/googletest}
+\defEmph{git}{https://git-scm.com/}
+\defEmph{GMock}{https://github.com/google/googlemock}
+\defEmph{selftest}{http://wiki.ros.org/self\_test}
+\defEmph{hztest}{http://wiki.ros.org/rostest/Nodes}
+
+\title{Testing with rostest and GTest}   
+\author{Christoph Steup} 
+\date{October 20, 2015} 
+
+\frame{\titlepage} 
+
+\frame{\frametitle{Table of contents}\tableofcontents} 
+
+
+\section{Why Automated Testing} 
+\frame{\frametitle{Some Examples}
+  \begin{itemize}
+    \item Gripper Integration of the Last Meeting
+      \begin{itemize}
+        \item Interface changed
+        \item Hardware configuration changed
+        \item Developer was away
+        \item A lot of guessing
+      \end{itemize} \pause
+    \item Ariane 5
+      \begin{itemize}
+        \item 370 million US\$ damage
+        \item Overflow of inertial system led to deactivation
+        \item Direct usage of Ariane 4 software
+        \item Lack of exception handling in Ariane 4 code
+        \item No test of Ariane 4 code within Ariane 5
+      \end{itemize}
+    \end{itemize}
+}
+\frame{\frametitle{Regressions}
+   \begin{block}{Definition: Regression}
+    Violation of a specific part of the expected behaviour of a piece of Software after a code change.
+   \end{block}
+   \pause
+   \begin{itemize}
+    \item Happens a lot in software development
+    \item Tightly coupled code is more prone for regression
+    \item If detected timely can be fixed easily
+    \item Hard to find after a lot of code changes
+   \end{itemize}
+   \pause
+   \begin{block}{Solution}
+    Automatically test software on each code change and report results.
+    \end{block}
+}
+
+\section{Unit Tests}
+\frame{\frametitle{Unit Test: Definition}
+  \begin{block}{Definition: Unit Test}
+    Test of a specific expected property of a single small piece of software, which can not be further decomposed.
+  \end{block}
+  \pause
+  \begin{block}{Benefits}
+    \begin{itemize}
+    \item Eases integration
+    \item Finds bugs during development
+    \item Documents API
+    \item Checks refactoring
+    \end{itemize}
+  \end{block}
+}
+
+\begin{frame}[fragile]
+  \frametitle{Unit Test: Examples}
+  \begin{lstlisting}[title=Unit to Test, style=code]
+int Factorial(int n); // Returns the factorial of n
+  \end{lstlisting}
+  \pause
+  \begin{lstlisting}[title=\href{https://code.google.com/p/googletest/wiki/Primer\#Simple_Tests}{GTest Primer Example}, style=code]
+// Tests factorial of 0.
+TEST(FactorialTest, HandlesZeroInput) {
+  EXPECT_EQ(1, Factorial(0));
+}
+
+// Tests factorial of positive numbers.
+TEST(FactorialTest, HandlesPositiveInput) {
+  EXPECT_EQ(1, Factorial(1));
+  EXPECT_EQ(2, Factorial(2));
+  EXPECT_EQ(6, Factorial(3));
+  EXPECT_EQ(40320, Factorial(8));
+}
+  \end{lstlisting}
+\end{frame}
+
+\section{Example}
+\begin{frame}[fragile]
+  \frametitle{Example Setup}
+  \begin{block}{GitHub Project}
+    \centering
+    \url{http://github.com/steup/Ros-Test-Example}
+  \end{block}
+  \pause
+  \begin{lstlisting}[title=Download Command, style=cmd]
+git clone https://github.com/steup/Ros-Test-Example.git
+  \end{lstlisting}
+  \pause
+  \begin{lstlisting}[title=Compile Command, style=cmd]
+cd Ros-Test-Example && catkin_make
+  \end{lstlisting}
+  \pause
+  \begin{lstlisting}[title=Create Documentation, style=cmd]
+cd src/cars && Doxygen common/Doxyfile
+  \end{lstlisting}
+  \begin{block}{Accessing Documentation}
+    \centering
+    Webbrowser on src/cars/doc/html/index.html
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Run the Simulation}
+
+  \begin{lstlisting}[title=Setup Workspace, style=cmd]
+. devel/setup.bash
+  \end{lstlisting}
+
+  \pause
+
+  \begin{block}{Basic Simulation}
+    A simple car simulation using \emph{RVIZ} to show the current state. The cars are remotely controlled using individual nodes. The simulation node handles new cars, state updates and collision checking. The simulation's speed can be set using the {\ttfamily frameRate} parameter.
+  \end{block}
+
+  \begin{lstlisting}[title=Run Simulation, style=cmd]
+roslaunch cars run.launch
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Adding Cars}
+
+  \begin{block}{Adding Cars}
+    Each car has its own unique identifier. The first car is always {\ttfamily"BEG\_IN\_001"}. The car's id can be set using the {\ttfamily numberPlate} parameter.
+  \end{block}
+
+  \begin{lstlisting}[title=Add Car, style=cmd]
+roslaunch cars car.launch numberPlate:=<something unique>
+  \end{lstlisting}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Unit Tests}
+  \begin{block}{Running Unit Tests}
+    Unit test are integrated within \emph{catkin} using the {\ttfamily CMakeLists.txt}.
+  \end{block}
+
+  \begin{lstlisting}[title=Run Unit Tests, style=cmd]
+catkin_make run_tests
+  \end{lstlisting}
+  
+  \begin{block}{Result of Unit Tests}
+    Unit tests report their result in the console after the tests are finished. Additionally, a XML-file containing the results can be found in the {\ttfamily build}-folder of the workspace. In this case: \url{build/test\_results/cars/gtest\_cars\_test.xml}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{rostests}
+
+  \begin{block}{Running rostest-Tests}
+    \emph{rostest}-Tests are integrated using \emph{roslaunch}'s XML notion. They are executed using {\ttfamily rostest}. They spawn their own \emph{roscore} on a different port to avoid interfering with an existing instance.
+  \end{block}
+
+  \begin{lstlisting}[title=Run Simulation Test, style=cmd]
+rostest cars simHz.test
+  \end{lstlisting}
+  \begin{lstlisting}[title=Run Car Test, style=cmd]
+rostest cars carHz.test
+  \end{lstlisting}
+
+  \begin{block}{Result of rostest-Tests}
+    \emph{rostest}-Tests report their result in the console after the tests are finished. However, this is only a brief overview. The full result is an XML-file in the user's {\ttfamily .ros}-folder, in this case: \url{.ros/test\_results/cars/...}
+  \end{block}
+\end{frame}
+
+
+\section{GTest}
+\frame{\frametitle{Writing \emph{GTest} Tests}
+  \begin{block}{Test Environments}
+		The \emph{GTest} Framework needs the declared tests to be be executed in a program using the following functions :
+  \end{block}
+      \begin{description}
+        \item[\ttfamily InitGoogleTest(...)]: This function parses testing relevant command parameters and sets up the environment
+        \item[\ttfamily RUN\_ALL\_TESTS()]: This function runs all specified tests, outputs the results and returns 0 on success
+        \end{description}
+  \pause
+  \begin{block}{Defining Tests}
+    A test is always associated to a test suite and has a unique name. There exist two specifications:
+  \end{block}
+      \begin{description}
+        \item[\ttfamily TEST(Suite, test)]: Declares an isolated test named {\ttfamily test} associated to the test suite {\ttfamily suite}.
+        \item[\ttfamily TEST\_F(Suite, test)]: Declares a test {\ttfamily test} using a Fixture named after the test suite {\ttfamily suite}.
+      \end{description}
+}
+\frame{\frametitle{ASSERT vs. EXPECT}
+  \begin{block}{Basic Test Operations}
+    The following test operations are automatically recognized and evaluated by \emph{GTest}:
+   \end{block}
+   \begin{description}
+     \item[\ttfamily ASSERT\_TRUE()]: If passed parameter evaluates to {\ttfamily false} stops execution of the test and fails it
+     \item[\ttfamily EXPECT\_TRUE()]: If passed parameter evaluates to {\ttfamily false} continues with the test, but test fails anyway
+     \item[\ttfamily ...\_EQ()]: Test for equality of items (typically using $==$)
+     \item[\ttfamily ...\_NE()]: Test for inequality of items (typically using $!=$)
+     \item[\ttfamily ...\_LT()]: Test for if first item is less then second item (typically using $<=$)
+     \item[\ttfamily ...\_STREQ()]: Test for equality of two C string ({\ttfamily(const) char*})
+     \item[\ttfamily ...\_STRCASEEQ()]: Test for equality of two C string ignoring case ({\ttfamily(const) char*})
+   \end{description}
+}
+\begin{frame}[fragile]
+  \frametitle{Fixtures}
+  \begin{block}{Definition}
+    A Fixture is class used as an environment template for test execution. It provides a repeatedly created similar environment for each test, isolating the individual test.
+  \end{block}
+  \pause
+  \begin{lstlisting}[style=code, basicstyle=\ttfamily\scriptsize\color{white}]
+class CarTestSuite : public ::testing::Test{
+    ros::ServiceServer mServer;
+    bool callback( cars::NewCar::Request& req,
+                   cars::NewCar::Response& res){
+      res.success = true;
+      return true;
+    }
+  public:
+    CarTestSuite() {
+      ros::NodeHandle n;
+      mServer = n.advertiseService( "carRegistry", 
+                                   &CarTestSuite::callback, 
+                                   this);
+    }
+};
+  \end{lstlisting}
+\end{frame}
+
+\frame{\frametitle{Advanced Tests}
+  \begin{block}{\href{https://code.google.com/p/googletest/wiki/AdvancedGuide\#More\_Assertions}{Advanced Test Operations}}
+    The general test operation cannot grasp all language constructs that are test-worthy. One very important example is exception handling. Fortunately, the advanced test operations of \emph{GTest} already contain appropriate operations:
+  \end{block}
+  \begin{description}
+    \item[\ttfamily ...\_THROW(statement, exception\_type)]: fails if the {\ttfamily statement} does not throw an exception of type {\ttfamily exception\_type}
+    \item[\ttfamily ...\_NO\_THROW(statement)]: fails if the {\ttfamily statement} throws exception
+  \end{description}
+ \pause
+ \begin{block}{Many More}
+  There exist many more specialized test operations in \emph{GTest} to be presented in this talk. Have a look yourself, when you feel the need to!
+ \end{block}
+}
+\begin{frame}[fragile]
+  \frametitle{\emph{catkin} Integration}
+  \begin{block}{\ttfamily CMakeList.txt}
+    Typically, there will be one \emph{GTest} program per packet. This program needs to be registered with Catkin through the {\ttfamily CMakeList.txt} using {\ttfamily catkin\_add\_gtest}. The signature of the statement is similar to {\ttfamily add\_executable}. However, if libraries need to be linked to the test program additional work needs to be done. As a template the following CMake snippet may be used:
+    \end{block}
+  \begin{lstlisting}[style=code, basicstyle=\ttfamily\scriptsize\color{white}, language=python]
+## Add gtest based cpp test target and link libraries
+catkin_add_gtest(${PROJECT_NAME}-test src/Test.cpp)
+if(TARGET ${PROJECT_NAME}-test)
+  target_link_libraries(${PROJECT_NAME}-test
+                        ${catkin_LIBRARIES} 
+                        ${PROJECT_NAME})
+endif()
+  \end{lstlisting}
+
+\end{frame}
+
+\section{rostest}
+
+\begin{frame}[fragile]
+  \frametitle{Writing a rostest-Test}
+    \begin{block}{\emph{rostest} \emph{roslaunch} XML-Files}
+      \emph{rostest} uses the \emph{roslaunch} XML description. The tag {\ttfamily $<$test$>$} is especially reserved for \emph{rostest} and is ignored by \emph{roslaunch}. {\ttfamily $<$test$>$} is similar to a node accepting {\ttfamily $<$param$>$} and being grouped in a namespace. The code executed by such a node needs to be a set of test suites implemented using \emph{GTest}. It may be integrated in your {\ttfamily CMakeLists.txt} using {\ttfamily add\_rostest\_gtest(name, testFile, GTestSource)}.
+    \end{block}
+
+  \begin{lstlisting}[style=code, basicstyle=\ttfamily\tiny\color{white}, language=python]
+  if(CATKIN_ENABLE_TESTING)
+    find_package( rostest REQUIRED )
+    add_rostest_gtest( ${PROJECT_NAME}_test_<name> 
+			                 launch/<name>.test src/Test_something.cpp )
+    target_link_libraries( ${PROJECT_NAME}_test_<name> 
+			                     ${catkin_LIBRARIES} ${PROJECT_NAME} )
+  endif()
+  \end{lstlisting}
+  
+  \begin{lstlisting}[style=code, basicstyle=\ttfamily\scriptsize\color{white}, language=xml]
+<launch>
+  <test test-name="<project>_test_<name>"
+        pkg="<project>" type="<project>_test_<name>" />
+</launch>
+\end{lstlisting}
+\end{frame}
+
+\begin{frame}
+  \frametitle{HzTest}
+  \begin{block}{Pre-defined Publish Rate Test}
+    \emph{rostest} already provides a pre-build test. The so-called \emph{hztest} tests publish frequency of nodes. It is very configurable using different parameters like:
+  \end{block}
+  \begin{description}
+    \item[topic]: Topic to listen to (namespace aware)
+    \item[hz]: target frequency  of the publisher
+    \item[hzerror]: allowed difference between measured frequence and hz value
+    \item[test\_duration]: how long the test should run
+  \end{description}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{HzTest Example}
+  \begin{lstlisting}[style=code, language=xml, basicstyle=\ttfamily\scriptsize\color{white}]
+<launch>
+  <include file="$(find cars)/launch/sim.launch">
+    <arg name="frameRate" value="0.1"/>
+  </include>
+  <test test-name="hztest_test" pkg="rostest" type="hztest" 
+        name="simHz" >
+    <param name="topic" value="roads" />  
+    <param name="hz" value="10" />
+    <param name="hzerror" value="1" />
+    <param name="test_duration" value="5.0" />    
+  </test>
+</launch>
+  \end{lstlisting}
+\end{frame}
+
+\section{Next Time}
+\frame{\frametitle{Next Time}
+  \begin{itemize}
+    \item Testing interfaces
+    \item Mocking interfaces using \emph{GMock}
+    \item Using \emph{selftest} to test on run time
+    \item Using \emph{git} to find regressions
+  \end{itemize}
+}
+
+
+\end{document}
