@@ -2,7 +2,24 @@
 src/CMakeLists.txt
 devel
 build
-doc
+
+#Doxygen Stuff
+
+html
+
+
+#Latex Stuff
+*.aux
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.log
+
+#VIM files
+*.sw?
+*~
 
 ## Compiled Object files
 *.slo
