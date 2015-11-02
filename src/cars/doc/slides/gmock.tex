@@ -1,0 +1,117 @@
+\documentclass{beamer}
+\setbeamertemplate{navigation symbols}{}
+\usetheme{Frankfurt}
+
+\usepackage{listings}
+\lstdefinestyle{code}{
+  language       = C++,
+  basicstyle      = \footnotesize\ttfamily\color{gray},
+  numbers         = left,
+  tabsize         = 2,
+  backgroundcolor = \color{black},
+  keywordstyle    = \bfseries\color{green},
+  commentstyle    = \itshape\color{cyan},
+  identifierstyle = \color{white},
+  stringstyle     = \color{orange},
+  numberstyle     = \color{red}
+}
+\lstdefinestyle{cmd}{
+  basicstyle      = \scriptsize\ttfamily\color{green},
+  backgroundcolor = \color{black}
+}
+
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,urlcolor=cyan}
+
+\usepackage{etoolbox}
+
+\begin{document}
+
+\newcommand{\defEmph}[2]{%
+	\expandafter\newcommand\csname #1\endcsname{%
+		\href{#2}{\textit #1}%
+	}%
+  \newtoggle{#1}%
+	\toggletrue{#1}%
+}
+\renewcommand{\emph}[1]{%
+	\iftoggle{#1}{%
+		\expandafter\csname #1\endcsname%
+		\global\togglefalse{#1}%
+	}{%
+		\textit #1%
+	}%
+}
+
+\defEmph{roslaunch}{http://wiki.ros.org/roslaunch}
+\defEmph{rostest}{http://wiki.ros.org/rostest}
+\defEmph{RVIZ}{http://wiki.ros.org/rviz}
+\defEmph{catkin}{http://wiki.ros.org/catkin}
+\defEmph{roscore}{http://wiki.ros.org/roscore}
+\defEmph{GTest}{https://github.com/google/googletest}
+\defEmph{git}{https://git-scm.com/}
+\defEmph{GMock}{https://github.com/google/googlemock}
+\defEmph{selftest}{http://wiki.ros.org/self\_test}
+\defEmph{hztest}{http://wiki.ros.org/rostest/Nodes}
+
+\title{Extended Testing using GMock and ROS::SelfTest}   
+\author{Christoph Steup} 
+\date{November 3, 2015} 
+
+\frame{\titlepage} 
+
+\frame{\frametitle{Table of contents}\tableofcontents} 
+
+\section{Summary: Unit-Testing}
+\frame{\frametitle{Interface: DefinitionSome Examples}
+  \begin{itemize}
+    \item Testing small units of Code
+    \item Simple tests expressing the expected behaviour
+    \item Automated test execution to catch regressions
+    \item Integration of the tests to the build process (catkin, rostest)
+  \end{itemize}
+}
+
+\section{Interfaces}
+\frame{\frametitle{Interface: Definition}
+  \begin{block}{Definition: Specification}{}
+  \begin{block}{Definition: Interface}{}
+}
+
+\frame{\frametitle{Flavours of Interfaces}
+ \begin{description}
+  \item[Class Interface]
+  \item[Library Interface]
+  \item[Communication Interface]
+  \item[User-Interface]
+ \end{description}
+}
+
+\frame{\frametitle{Interface Hierarchy}
+
+}
+
+\frame{\frametitle{Benefits}
+  \begin{block}{Decoupling}{}
+  \begin{block}{Testing}{}
+  \begin{block}{Mocking}{}
+}
+
+\begin{frame}[fragile]
+\frametitle{Example: Decoupling}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Example: Testing}
+
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Example: Mocking}
+
+\end{frame}
+
+
+
+\end{document}

@@ -1,3 +1,3 @@
-slides.pdf: slides.tex
-	pdflatex slides.tex
-	pdflatex slides.tex
+*.pdf: *.tex
+	pdflatex $<
+	pdflatex $<
