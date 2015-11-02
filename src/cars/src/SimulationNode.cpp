@@ -1,6 +1,6 @@
 #include "OccupancyGridRoads.h"
-#include "SimCarFactory.h"
 #include "Simulation.h"
+#include "SimCar.h"
 
 #include <cars/NewCar.h>
 
@@ -10,7 +10,10 @@
 
 using namespace std;
 
-unique_ptr<Simulation> simPtr;
+using Sim = Simulation<SimCar>;
+using SimPtr = unique_ptr<Sim>;
+
+SimPtr simPtr;
 
 void run(const ros::TimerEvent& e) {
   simPtr->run();
@@ -33,8 +36,7 @@ int main(int argc, char** argv) {
     return -2;
   }
   OccupancyGridRoads roads(18, 18, ros::Duration(frameRate));
-  SimCarFactory factory;
-  simPtr = unique_ptr<Simulation>(new Simulation(roads, factory));
+  simPtr = SimPtr(new Sim(roads));
   ros::NodeHandle n;
   ros::Timer timer = n.createTimer(ros::Duration(frameRate), &run);
   ros::ServiceServer registryServer = n.advertiseService("carRegistry", &createCar);
