@@ -98,8 +98,7 @@ include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a cpp library
 add_library(cars src/SimpleDriver.cpp src/Car.cpp src/SynchronizedCar.cpp
-  src/OccupancyGridRoads.cpp src/SimCar.cpp src/Simulation.cpp
-  src/SimCarFactory.cpp)
+  src/OccupancyGridRoads.cpp src/SimCar.cpp )
 
 #   src/${PROJECT_NAME}/aseia_base.cpp
 # )
@@ -161,11 +160,20 @@ target_link_libraries(simulation ${catkin_LIBRARIES} cars)
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
+
 if(CATKIN_ENABLE_TESTING)
+
+  # Create a gmock target to be used as a dependency by test programs
+  add_library(gmock IMPORTED STATIC GLOBAL)
+  set_property(TARGET gmock PROPERTY IMPORTED_LOCATION /usr/lib/libgmock.so)
+
+  ## Add gtest based cpp test target and link libraries
 	find_package(rostest REQUIRED)
 	add_rostest_gtest(${PROJECT_NAME}-test launch/gtest.test src/Test.cpp)
+  catkin_add_gtest(${PROJECT_NAME}-mock src/Mock.cpp)
   target_link_libraries(${PROJECT_NAME}-test ${catkin_LIBRARIES} cars)
+  target_link_libraries(${PROJECT_NAME}-mock ${catkin_LIBRARIES} cars gmock)
+
 endif()
 
 ## Add folders to be run by python nosetests
