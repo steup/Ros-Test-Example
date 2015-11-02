@@ -1,18 +1,20 @@
 #pragma once
 
 #include "RoadInterface.h"
-#include "SimCar.h"
+#include "SimCarInterface.h"
+#include "SimCarFactoryInterface.h"
 
 #include <map>
 
 class Simulation {
   private:
     RoadInterface& mRoads;
-    using Storage = std::map<std::string, SimCar>;
+    SimCarFactoryInterface& mFactory;
+    using Storage = std::map<std::string, std::unique_ptr<SimCarInterface>>;
     Storage mCars;
 
   public:
-    Simulation(RoadInterface& roads);
+    Simulation(RoadInterface& roads, SimCarFactoryInterface& factory);
     bool createCar(const std::string& numberPlate);
     bool removeCar(const std::string& numberPlate);
     void run();

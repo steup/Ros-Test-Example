@@ -3,7 +3,7 @@
 using namespace std;
 
 SimCar::SimCar(const std::string numberPlate, SimCar::Dir dir, unsigned int x, unsigned int y)
-  : SynchronizedCar(numberPlate), dir(dir), x(x), y(y) {
+  : SimCarInterface(numberPlate, dir, x, y) {
   ros::NodeHandle n;
   
   windowPub=n.advertise<cars::Windows>(string("cars/")+numberPlate+"/windows", 1000);

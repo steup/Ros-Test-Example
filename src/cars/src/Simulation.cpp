@@ -1,21 +1,23 @@
 #include "Simulation.h"
 
+#include <ros/ros.h>
+
 #include <tuple>
 #include <list>
 
 using namespace std;
 using Steering = SynchronizedCar::Steering;
 using Cell     = RoadInterface::Cell;
-using Dir      = SimCar::Dir;
+using Dir      = SimCarInterface::Dir;
 
-Simulation::Simulation(RoadInterface& roads) : mRoads(roads){}
+Simulation::Simulation(RoadInterface& roads, SimCarFactoryInterface& factory) : mRoads(roads), mFactory(factory){}
 
 void Simulation::run() {
 
   list<string> eraseList;
 
   for(auto& v : mCars) {
-    SimCar& car = v.second;
+    SimCarInterface& car = *v.second;
 
     if(car.steer() == Steering::Left)
       switch(car.dir) {
@@ -68,7 +70,7 @@ void Simulation::run() {
     mCars.erase(v);
 
   for(auto& v : mCars) {
-    SimCar& car = v.second;
+    SimCarInterface& car = *v.second;
 
     switch(car.dir) {
       case(Dir::Up)   : car.windows(mRoads.isFree(car.y, car.x-1),
@@ -101,8 +103,9 @@ bool Simulation::createCar(const std::string& numberPlate){
       return false;
   }
   
-  auto i = mCars.emplace(piecewise_construct, tuple<const string&>(numberPlate), tuple<const string&, Dir, unsigned int, unsigned int>(numberPlate, Dir::Right, 1, 1));
-  i.first->second.windows(mRoads.isFree(2,1), mRoads.isFree(1,2), mRoads.isFree(0,1));
+  auto i = mCars.emplace(numberPlate, mFactory.createCar(numberPlate, Dir::Right, 1, 1));
+  SimCarInterface& newCar = *i.first->second;
+  newCar.windows(mRoads.isFree(newCar.y+1,newCar.x), mRoads.isFree(newCar.y,newCar.x+1), mRoads.isFree(newCar.y-1, newCar.x));
   return true; 
 }
 

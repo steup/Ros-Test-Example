@@ -97,7 +97,9 @@ CATKIN_DEPENDS roscpp std_msgs nav_msgs
 include_directories(include ${catkin_INCLUDE_DIRS})
 
 ## Declare a cpp library
-add_library(cars src/SimpleDriver.cpp src/Car.cpp src/SynchronizedCar.cpp src/OccupancyGridRoads.cpp src/SimCar.cpp src/Simulation.cpp)
+add_library(cars src/SimpleDriver.cpp src/Car.cpp src/SynchronizedCar.cpp
+  src/OccupancyGridRoads.cpp src/SimCar.cpp src/Simulation.cpp
+  src/SimCarFactory.cpp)
 
 #   src/${PROJECT_NAME}/aseia_base.cpp
 # )
