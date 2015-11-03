@@ -350,17 +350,47 @@ endif()
 \end{frame}
 
 \section{Finding Regressions}
-\frame{\frametitle{VCS History}
+\begin{frame}[fragile]
+  \frametitle{VCS History}
+  \begin{block}{Finding A Suspicous Commit}
+    Using Unit-Tests the relevant file is normally easy to track down. After the relevant file or a list of files is found a look to the history of this file is necessary.
+  \end{block}
 
-}
+  \begin{lstlisting}[title=Getting the broken code, style=cmd]
+git checkout origin/regression -b regression
+  \end{lstlisting}
 
-\frame{\frametitle{Rewriting History}
+  \begin{lstlisting}[title=Run the tests, style=cmd]
+catkin_make run_tests
+  \end{lstlisting}
 
-}
+  \pause
+  \begin{lstlisting}[title=Have a look at the log, style=cmd]
+git log src/cars/src/Car.h
+git log src/cars/src/Car.cpp
+  \end{lstlisting}
+\end{frame}
 
-\frame{\frametitle{Reverting and Blaming}
+\begin{frame}[fragile]
+  \frametitle{Rewriting History}
+  \begin{lstlisting}[title=Verify changes, style=cmd]
+git diff 4a1e0ef731 src/cars/src/Car.cpp
+git diff 35a8437a89 src/cars/src/Car.cpp
+  \end{lstlisting}
 
-}
+  \pause
+
+  \begin{block}{Repairing Broken Things}
+    {\bf NEVER ever rewrite the history of the uploaded repository}. If a single commit is responsible it is easiest to fix the problem by reverting the whole commit. If not change the code and commit the changes as normal.
+  \end{block}
+
+  \pause
+
+  \begin{lstlisting}[title=Repair Everything, style=cmd]
+git revert 35a8437a89
+git revert 4a1e0ef731
+  \end{lstlisting}
+\end{frame}
 
 \section{Still ToDo}
 
