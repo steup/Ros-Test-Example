@@ -1,0 +1,32 @@
+<launch>
+  <node  name="pub0" type="pub.py" pkg="python_test">
+    <remap from="out" to="a"/>
+  </node>
+  <node  name="pub1" type="pub.py" pkg="python_test">
+    <remap from="out" to="b"/>
+  </node>
+  <node name="add" type="add_node.py" pkg="python_test">
+    <remap from="in0" to="a"/>
+    <remap from="in1" to="b"/>
+    <remap from="out" to="in"/>
+  </node>
+  <node name="sub" type="sub.py" pkg="python_test"/>
+  <test test-name="hztest" type="hztest" pkg="rostest" name="hztest">
+    <param name="topic" value="in"/>
+    <param name="hz" value="2"/>
+    <param name="hzerror" value="0.1"/>
+    <param name="test_duration" value="1"/>
+  </test>
+  <test test-name="pubtest" type="publishtest" pkg="rostest">
+  <rosparam>
+    topics:
+      - name: a
+        timeout: 1
+        negative: False
+      - name: b
+        timeout: 1
+        negative: False
+   </rosparam>
+  </test>
+  <test test-name="unit" type="test_add.py" pkg="python_test"/>
+</launch>
