@@ -120,6 +120,7 @@ add_dependencies(cars cars_generate_messages_cpp)
 # )
 target_link_libraries(car ${catkin_LIBRARIES} cars)
 target_link_libraries(simulation ${catkin_LIBRARIES} cars)
+target_link_libraries(cars ${catkin_LIBRARIES})
 
 #############
 ## Install ##
@@ -162,10 +163,6 @@ target_link_libraries(simulation ${catkin_LIBRARIES} cars)
 
 
 if(CATKIN_ENABLE_TESTING)
-
-  # Create a gmock target to be used as a dependency by test programs
-  add_library(gmock IMPORTED STATIC GLOBAL)
-  set_property(TARGET gmock PROPERTY IMPORTED_LOCATION /usr/lib/libgmock.so)
 
   ## Add gtest based cpp test target and link libraries
 	find_package(rostest REQUIRED)
